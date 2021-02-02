@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const graphQLHTTPMiddleware = require('express-graphql');
+const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
 
 const app = express();
@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 //     response.send('Server online! 🤖');
 // })
 
-app.use('/graphql', graphQLHTTPMiddleware({
+app.use('/graphql', graphqlHTTP({
     schema: buildSchema(`
         type RootQuery {
             events: [String!]!
