@@ -26,7 +26,15 @@ app.use('/graphql', graphqlHTTP({
             mutation: RootMutation
         }
     `),
-    rootValue: {}
+    rootValue: {
+        events: () => {
+            return ['Job Application for Gooble', 'Workout', 'Project Dephosphorus']
+        },
+        createEvent: (args) => {
+            const eventName = args.name;
+            return eventName;
+        }
+    },
 }));
 
 app.listen(3333);
