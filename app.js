@@ -13,12 +13,27 @@ app.use(bodyParser.json());
 
 app.use('/graphql', graphqlHTTP({
     schema: buildSchema(`
+        type Event {
+            _id: ID!
+            title: String!
+            description: String!
+            date: String!
+            time: String!
+        }
         type RootQuery {
             events: [String!]!
+            events: [Event!]!
+        }
+
+        input EventInput {
+            title: String!
+            description: String!
+            date: String!
+            time: String!
         }
 
         type RootMutation {
-            createEvent(name: String): String
+            createEvent(eventInput: EventInput): Event
         }
 
         schema {
