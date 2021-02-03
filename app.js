@@ -5,6 +5,8 @@ const { buildSchema } = require('graphql');
 
 const app = express();
 
+const events = [];
+
 app.use(bodyParser.json());
 
 // app.get('/', (request, response, next) => {
@@ -21,7 +23,6 @@ app.use('/graphql', graphqlHTTP({
             time: String!
         }
         type RootQuery {
-            events: [String!]!
             events: [Event!]!
         }
 
@@ -43,11 +44,18 @@ app.use('/graphql', graphqlHTTP({
     `),
     rootValue: {
         events: () => {
-            return ['Job Application for Gooble', 'Workout', 'Project Dephosphorus']
+            return events;
         },
-        createEvent: (args) => {
-            const eventName = args.name;
-            return eventName;
+        createEvent: ({eventInput}) => {
+            const event = {
+                _id: Math.random().toString(),
+                title: eventInput.title,
+                description: eventInput.description,
+                date: eventInput.date,
+                time: eventInput.time
+            };
+            events.push(event);
+            return event;
         }
     },
     graphiql: true
