@@ -12,10 +12,6 @@ const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWOR
 
 app.use(bodyParser.json());
 
-// app.get('/', (request, response, next) => {
-//     response.send('Server online! 🤖');
-// })
-
 app.use('/graphql', graphqlHTTP({
     schema: buildSchema(`
         type Event {
@@ -59,13 +55,6 @@ app.use('/graphql', graphqlHTTP({
             });
         },
         createEvent: ({eventInput}) => {
-            // const event = {
-            //     _id: Math.random().toString(),
-            //     title: eventInput.title,
-            //     description: eventInput.description,
-            //     date: eventInput.date,
-            //     time: eventInput.time
-            // };
             const event = new Event({
                 title: eventInput.title,
                 description: eventInput.description,
@@ -94,5 +83,3 @@ mongoose.connect(uri, { useNewUrlParser: true })
  .catch(err => {
      console.log(err);
  });
-
-// app.listen(3333);
