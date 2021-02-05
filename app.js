@@ -4,9 +4,10 @@ const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
 
+const Event = require('./models/event');
+
 const app = express();
 
-const events = [];
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@myscheduler.zb5gm.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`;
 
 app.use(bodyParser.json());
@@ -49,15 +50,29 @@ app.use('/graphql', graphqlHTTP({
             return events;
         },
         createEvent: ({eventInput}) => {
-            const event = {
-                _id: Math.random().toString(),
+            // const event = {
+            //     _id: Math.random().toString(),
+            //     title: eventInput.title,
+            //     description: eventInput.description,
+            //     date: eventInput.date,
+            //     time: eventInput.time
+            // };
+            const event = new Event({
                 title: eventInput.title,
                 description: eventInput.description,
-                date: eventInput.date,
+                date: new Date(eventInput.date),
                 time: eventInput.time
-            };
-            events.push(event);
-            return event;
+            });
+            return event
+            .save()
+            .then(result => {
+                console.log(result);
+                return {...result._doc};
+            })
+            .catch(err => {
+                console.log(err);
+                throw err;
+            });
         }
     },
     graphiql: true
