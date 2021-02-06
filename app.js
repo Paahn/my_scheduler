@@ -21,6 +21,14 @@ app.use('/graphql', graphqlHTTP({
             date: String!
             time: String!
         }
+
+        type User {
+            _id: ID!
+            email: String!
+            password: String
+            username: String!
+        }
+
         type RootQuery {
             events: [Event!]!
         }
