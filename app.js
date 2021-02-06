@@ -40,6 +40,12 @@ app.use('/graphql', graphqlHTTP({
             time: String!
         }
 
+        input UserInput {
+            email: String!
+            password: String!
+            username: String!
+        }
+
         type RootMutation {
             createEvent(eventInput: EventInput): Event
         }
