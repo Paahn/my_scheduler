@@ -5,6 +5,7 @@ const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
 
 const Event = require('./models/event');
+const User = require('./models/user');
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use('/graphql', graphqlHTTP({
 
         type RootMutation {
             createEvent(eventInput: EventInput): Event
+            createUser(userInput: UserInput): User
         }
 
         schema {
@@ -84,6 +86,13 @@ app.use('/graphql', graphqlHTTP({
             .catch(err => {
                 console.log(err);
                 throw err;
+            });
+        },
+        createUser: ({userInput}) => {
+            const user = new User({
+                email: userInput.email,
+                password: userInput.password,
+                username: userInput.username
             });
         }
     },
