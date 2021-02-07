@@ -98,6 +98,10 @@ app.use('/graphql', graphqlHTTP({
                     password: hashedPassword,
                     username: userInput.username
                 });
+                return user.save();
+            })
+            .then(result => {
+                return {...result._doc};
             })
             .catch(err => {
                 throw err;
