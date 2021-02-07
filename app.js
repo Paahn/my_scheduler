@@ -90,11 +90,17 @@ app.use('/graphql', graphqlHTTP({
             });
         },
         createUser: ({userInput}) => {
-            bcrypt.hash(userInput.password, 12).then().catch();
-            const user = new User({
-                email: userInput.email,
-                password: userInput.password,
-                username: userInput.username
+            bcrypt
+            .hash(userInput.password, 12)
+            .then(hashedPassword => {
+                const user = new User({
+                    email: userInput.email,
+                    password: hashedPassword,
+                    username: userInput.username
+                });
+            })
+            .catch(err => {
+                throw err;
             });
         }
     },
