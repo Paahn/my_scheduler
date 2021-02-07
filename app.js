@@ -90,8 +90,15 @@ app.use('/graphql', graphqlHTTP({
             });
         },
         createUser: ({userInput}) => {
-            return bcrypt
-            .hash(userInput.password, 12)
+            return User
+            .findOne({email: userInput.email})
+            .then(user => {
+                if (user) {
+                    throw new Error('User email exists already.');
+                }
+                return bcrypt
+                .hash(userInput.password, 12)
+            })
             .then(hashedPassword => {
                 const user = new User({
                     email: userInput.email,
