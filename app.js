@@ -101,7 +101,7 @@ app.use('/graphql', graphqlHTTP({
                 return user.save();
             })
             .then(result => {
-                return {...result._doc};
+                return {...result._doc, password: "You can't retrieve the password"};
             })
             .catch(err => {
                 throw err;
