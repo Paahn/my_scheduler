@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const Event = require('./models/event');
 const User = require('./models/user');
@@ -89,6 +90,7 @@ app.use('/graphql', graphqlHTTP({
             });
         },
         createUser: ({userInput}) => {
+            bcrypt.hash(userInput.password, 12).then().catch();
             const user = new User({
                 email: userInput.email,
                 password: userInput.password,
