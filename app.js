@@ -90,7 +90,7 @@ app.use('/graphql', graphqlHTTP({
             });
         },
         createUser: ({userInput}) => {
-            bcrypt
+            return bcrypt
             .hash(userInput.password, 12)
             .then(hashedPassword => {
                 const user = new User({
