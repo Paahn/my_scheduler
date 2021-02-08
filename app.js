@@ -34,7 +34,10 @@ const user = userId => {
     return User
     .findById(userId)
     .then(user => {
-        return {...user._doc};
+        return {
+            ...user._doc,
+            createdEvent: events.bind(this, user._doc.createdEvent)
+        };
     })
     .catch(err => {
         throw err;
@@ -115,7 +118,10 @@ app.use('/graphql', graphqlHTTP({
             return event
             .save()
             .then(result => {
-                createdEvent = {...result._doc};
+                createdEvent = {
+                    ...result._doc,
+                    creator: user.bind(this, result._doc.creator)
+                };
                 return User.findById('601f2ff3de321b057630cc27');
             })
             .then(user => {
