@@ -14,15 +14,32 @@ const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWOR
 
 app.use(bodyParser.json());
 
+const events = eventIds => {
+    return Event
+    .find({_id: {$in: eventIds}})
+    .then(events => {
+        return events.map(event => {
+            return {
+                ...event._doc,
+                creator: user.bind(this, event.creator)
+            }
+        })
+    })
+    .catch(err => {
+        throw err;
+    });
+}
+
 const user = userId => {
-    return User.findById(userId)
+    return User
+    .findById(userId)
     .then(user => {
         return {...user._doc};
     })
     .catch(err => {
         throw err;
     });
-}
+};
 
 app.use('/graphql', graphqlHTTP({
     schema: buildSchema(`
