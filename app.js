@@ -22,6 +22,7 @@ app.use('/graphql', graphqlHTTP({
             description: String!
             date: String!
             time: String!
+            creator: User!
         }
 
         type User {
@@ -29,6 +30,7 @@ app.use('/graphql', graphqlHTTP({
             email: String!
             password: String
             username: String!
+            createdEvent: [Event!]
         }
 
         type RootQuery {
