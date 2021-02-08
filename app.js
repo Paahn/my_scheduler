@@ -14,6 +14,16 @@ const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWOR
 
 app.use(bodyParser.json());
 
+const user = userId => {
+    return User.findById(userId)
+    .then(user => {
+        return {...user._doc};
+    })
+    .catch(err => {
+        throw err;
+    });
+}
+
 app.use('/graphql', graphqlHTTP({
     schema: buildSchema(`
         type Event {
@@ -63,14 +73,12 @@ app.use('/graphql', graphqlHTTP({
     rootValue: {
         events: () => {
             return Event
-            .find().populate('creator')
+            .find()
             .then(events => {
                 return events.map(event => {
                     return {
                         ...event._doc,
-                        creator: {
-                            ...event._doc.creator._doc
-                        }
+                        creator: user.bind(this, event._doc.creator)
                     };
                 });
             })
