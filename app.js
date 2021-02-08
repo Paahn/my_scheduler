@@ -66,7 +66,12 @@ app.use('/graphql', graphqlHTTP({
             .find().populate('creator')
             .then(events => {
                 return events.map(event => {
-                    return {...event._doc};
+                    return {
+                        ...event._doc,
+                        creator: {
+                            ...event._doc.creator._doc
+                        }
+                    };
                 });
             })
             .catch(err => {
