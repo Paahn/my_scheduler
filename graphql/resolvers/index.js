@@ -66,7 +66,7 @@ module.exports = {
                 throw new Error('User not found.');
             }
             creator.createdEvent.push(event);
-            const userSavedResult = await creator.save();
+            await creator.save();
             return createdEvent; 
         } catch(err) {
             console.log(err);
