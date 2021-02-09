@@ -2,55 +2,50 @@ const bcrypt = require('bcryptjs');
 const Event = require('../../models/event');
 const User = require('../../models/user');
 
-const events = eventIds => {
-    return Event
-    .find({_id: {$in: eventIds}})
-    .then(events => {
-        return events.map(event => {
-            return {
-                ...event._doc,
-                date: new Date(event._doc.date).toISOString(),
-                creator: user.bind(this, event.creator)
-            }
-        })
-    })
-    .catch(err => {
+const events = async eventIds => {
+    try {
+       const events = await Event.find({_id: {$in: eventIds}})
+       return events.map(event => {
+           return {
+               ...event._doc,
+               date: new Date(event._doc.date).toISOString(),
+               creator: user.bind(this, event.creator)
+           }
+       }) 
+    } catch(err) {
         throw err;
-    });
+    };
 };
 
-const user = userId => {
-    return User
-    .findById(userId)
-    .then(user => {
+const user = async userId => {
+    try {
+        const user = await User.findById(userId)
         return {
             ...user._doc,
             createdEvent: events.bind(this, user._doc.createdEvent)
-        };
-    })
-    .catch(err => {
+        };   
+    } catch(err) {
         throw err;
-    });
+    }
 };
 
 module.exports = {
-    events: () => {
-        return Event
-        .find()
-        .then(events => {
+    events: async () => {
+        try {
+         const events = await Event.find()
+        
             return events.map(event => {
                 return {
                     ...event._doc,
                     date: new Date(event._doc.date).toISOString(),
                     creator: user.bind(this, event._doc.creator)
                 };
-            });
-        })
-        .catch(err => {
+            });   
+        } catch(err) {
             throw err;
-        });
+        }
     },
-    createEvent: ({eventInput}) => {
+    createEvent: async ({eventInput}) => {
         const event = new Event({
             title: eventInput.title,
             description: eventInput.description,
@@ -59,54 +54,41 @@ module.exports = {
             creator: '601f2ff3de321b057630cc27'
         });
         let createdEvent;
-        return event
-        .save()
-        .then(result => {
+        try {
+           const result = await event.save()
             createdEvent = {
                 ...result._doc,
                 date: new Date(event._doc.date).toISOString(),
                 creator: user.bind(this, result._doc.creator)
             };
-            return User.findById('601f2ff3de321b057630cc27');
-        })
-        .then(user => {
-            if (!user) {
+            const creator = await User.findById('601f2ff3de321b057630cc27');
+            if (!creator) {
                 throw new Error('User not found.');
             }
-            user.createdEvent.push(event);
-            return user.save();
-        })
-        .then(result => {
-            return createdEvent;
-        })
-        .catch(err => {
+            creator.createdEvent.push(event);
+            const userSavedResult = await creator.save();
+            return createdEvent; 
+        } catch(err) {
             console.log(err);
             throw err;
-        });
+        };
     },
-    createUser: ({userInput}) => {
-        return User
-        .findOne({email: userInput.email})
-        .then(user => {
-            if (user) {
+    createUser: async ({userInput}) => {
+        try {
+            const existingUser = await User.findOne({email: userInput.email})
+            if (existingUser) {
                 throw new Error('User email exists already.');
             }
-            return bcrypt
-            .hash(userInput.password, 12)
-        })
-        .then(hashedPassword => {
+            const hashedPassword = await bcrypt.hash(userInput.password, 12)
             const user = new User({
                 email: userInput.email,
                 password: hashedPassword,
                 username: userInput.username
             });
-            return user.save();
-        })
-        .then(result => {
+            const result = await user.save();
             return {...result._doc, password: "You can't retrieve the password"};
-        })
-        .catch(err => {
+        } catch(err) {
             throw err;
-        });
+        }
     }
 };
